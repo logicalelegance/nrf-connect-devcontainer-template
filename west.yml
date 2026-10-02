@@ -1,0 +1,20 @@
+# West manifest for this application (Nordic's "workspace application" layout, T2 topology).
+#
+# THE ONE LINE TO CHANGE the nRF Connect SDK version is `revision:` below.
+#   - release tag, e.g. v3.4.1   -> pinned, reproducible
+#   - `main`                     -> latest development (not reproducible)
+# The Zephyr RTOS version follows from the NCS release (NCS carries its own Zephyr fork).
+manifest:
+  remotes:
+    - name: ncs
+      url-base: https://github.com/nrfconnect
+
+  projects:
+    - name: nrf
+      remote: ncs
+      repo-path: sdk-nrf
+      revision: v3.4.1
+      import: true
+
+  self:
+    path: app

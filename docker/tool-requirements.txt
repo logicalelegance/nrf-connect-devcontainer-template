@@ -1,0 +1,5 @@
+# Pinned to match NCS v3.4.1 (sdk-nrf/scripts/tools-versions-linux.yml).
+# Bump together with the NCS revision in west.yml.
+west==1.4.0
+cmake==4.2.1
+ninja==1.13.0
