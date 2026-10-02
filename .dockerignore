@@ -1,0 +1,4 @@
+# The image only needs these two files from the repo.
+*
+!west.yml
+!docker/install-toolchain.sh
