@@ -1,0 +1,22 @@
+# Gate for every branch push (this also covers pull requests from branches in this repo).
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    permissions:
+      contents: read
+      packages: write
+
+  # Single status to watch or require in branch protection.
+  all-checks-passed:
+    needs: build
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - run: test "${{ needs.build.result }}" = success
