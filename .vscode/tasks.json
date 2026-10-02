@@ -1,0 +1,26 @@
+// Run with Terminal > Run Task (Build is also Cmd+Shift+B). Same commands as the README.
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "west build -b nrf52840dk/nrf52840 -d build .",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Test",
+      "type": "shell",
+      "command": "west twister -T tests -p native_sim/native/64 --outdir twister-out",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Clean",
+      "type": "shell",
+      "command": "rm -rf build twister-out",
+      "problemMatcher": []
+    }
+  ]
+}
