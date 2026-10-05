@@ -32,6 +32,26 @@
         { "text": "load" },
         { "text": "monitor reset" }
       ]
+    },
+    {
+      // Same J-Link GDB server on the Mac (scripts/jlink-gdb-server.sh), with Cortex-Debug's extra
+      // views: peripheral registers, memory, disassembly, live watch. Stops at main() first.
+      "name": "Debug on device (Cortex-Debug)",
+      "type": "cortex-debug",
+      "request": "launch",
+      "preLaunchTask": "Build (current board)",
+      "executable": "${workspaceFolder}/build/app/zephyr/zephyr.elf",
+      "cwd": "${workspaceFolder}",
+      "servertype": "external",
+      "gdbTarget": "host.docker.internal:2331",
+      "gdbPath": "/opt/zephyr-sdk/gnu/arm-zephyr-eabi/bin/arm-zephyr-eabi-gdb",
+      "armToolchainPath": "/opt/zephyr-sdk/gnu/arm-zephyr-eabi/bin",
+      "toolchainPrefix": "arm-zephyr-eabi",
+      "overrideLaunchCommands": ["monitor reset", "load", "monitor reset"],
+      "runToEntryPoint": "main",
+      // Register descriptions for your chip, from the NCS workspace:
+      // nrf52840.svd (nRF52840 DK), nrf52.svd (nRF52832), nrf5340_application.svd (nRF5340)
+      "svdFile": "/workdir/modules/hal/nordic/nrfx/bsp/stable/mdk/nrf52840.svd"
     }
   ]
 }
