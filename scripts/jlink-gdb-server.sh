@@ -11,4 +11,6 @@ set -euo pipefail
 DEVICE=${1:-nRF52840_xxAA}
 
 # Port 2331: GDB. Port 19021: RTT output (see rtt.conf). Only reachable from this Mac.
-exec JLinkGDBServerCL -device "$DEVICE" -if SWD -speed 4000 -port 2331 -LocalhostOnly 1 -nogui
+# The Zephyr RTOS plugin shows each Zephyr thread in the debugger (firmware built with debug.conf).
+exec JLinkGDBServerCL -device "$DEVICE" -if SWD -speed 4000 -port 2331 -LocalhostOnly 1 -nogui \
+    -rtos GDBServer/RTOSPlugin_Zephyr
