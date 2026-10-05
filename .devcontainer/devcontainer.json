@@ -20,7 +20,7 @@
       "extensions": [
         "ms-vscode.cpptools",               // C/C++ IntelliSense
         "nordic-semiconductor.nrf-connect", // build panel, Kconfig GUI/hover, Devicetree editor
-        "marus25.cortex-debug",             // "Debug on device (Cortex-Debug)": registers, memory views
+        "marus25.cortex-debug",             // "Debug on device": registers, memory views, threads
         // Cortex-Debug's helpers, listed so they're installed in the container up front
         // (left to automatic resolution, debug-tracker-vscode may not load in time).
         "mcu-debug.debug-tracker-vscode",
