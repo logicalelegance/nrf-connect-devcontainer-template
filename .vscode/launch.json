@@ -17,13 +17,13 @@
     {
       // Debugs the board through a J-Link connected to the Mac. First, on the Mac (not in the
       // container), start the GDB server:  scripts/jlink-gdb-server.sh [J-Link device name]
-      // Builds whatever board build/ was last built for, loads it and stops at main().
+      // Builds for the board in board.env, loads it and stops at main().
       // Cortex-Debug adds peripheral registers, memory, disassembly and live watch views;
       // build with debug.conf to see Zephyr threads.
       "name": "Debug on device",
       "type": "cortex-debug",
       "request": "launch",
-      "preLaunchTask": "Build (current board)",
+      "preLaunchTask": "Build",
       "executable": "${workspaceFolder}/build/app/zephyr/zephyr.elf",
       "cwd": "${workspaceFolder}",
       "servertype": "external",
@@ -33,9 +33,8 @@
       "toolchainPrefix": "arm-zephyr-eabi",
       "overrideLaunchCommands": ["monitor reset", "load", "monitor reset"],
       "runToEntryPoint": "main",
-      // Register descriptions for your chip, from the NCS workspace:
-      // nrf52840.svd (nRF52840 DK), nrf52.svd (nRF52832), nrf5340_application.svd (nRF5340)
-      "svdFile": "/workdir/modules/hal/nordic/nrfx/bsp/stable/mdk/nrf52840.svd"
+      // Chip register descriptions; scripts/build.sh links the SVD for the chip being built.
+      "svdFile": "${workspaceFolder}/build/board.svd"
     }
   ]
 }

@@ -91,7 +91,7 @@ jobs:
 
       - name: Build firmware
         run: |
-          docker run --rm -v "$PWD":/workdir/app "$IMAGE" west build -b nrf52840dk/nrf52840 -d build .
+          docker run --rm -v "$PWD":/workdir/app "$IMAGE" scripts/build.sh
           sha256sum build/app/zephyr/zephyr.elf build/app/zephyr/zephyr.hex
 
       # Version as compiled into the firmware (from the VERSION file, read from the header

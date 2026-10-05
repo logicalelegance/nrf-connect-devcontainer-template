@@ -4,11 +4,17 @@
 # Needs SEGGER's J-Link Software Pack installed on the Mac.
 #
 # Usage: scripts/jlink-gdb-server.sh [J-Link device name]
-#   scripts/jlink-gdb-server.sh                  # nRF52840 DK (default)
-#   scripts/jlink-gdb-server.sh nRF52832_xxAA    # nRF52832 boards, e.g. Thingy:52
+#   scripts/jlink-gdb-server.sh                  # chip of the last build (build/app/zephyr/runners.yaml)
+#   scripts/jlink-gdb-server.sh nRF52832_xxAA    # or name it explicitly
 set -euo pipefail
 
-DEVICE=${1:-nRF52840_xxAA}
+# Zephyr writes each board's J-Link device name into the build's runners.yaml.
+RUNNERS="$(dirname "$0")/../build/app/zephyr/runners.yaml"
+DEVICE=${1:-$(grep -o -- "--device=[^ ,'\"]*" "$RUNNERS" 2>/dev/null | head -1 | cut -d= -f2 || true)}
+if [ -z "$DEVICE" ]; then
+    echo "No J-Link device name: build the firmware first, or pass one (e.g. nRF52840_xxAA)." >&2
+    exit 1
+fi
 
 # Port 2331: GDB. Port 19021: RTT output (see rtt.conf). Only reachable from this Mac.
 # The Zephyr RTOS plugin shows each Zephyr thread in the debugger (firmware built with debug.conf).

@@ -5,16 +5,8 @@
     {
       "label": "Build",
       "type": "shell",
-      "command": "west build -b nrf52840dk/nrf52840 -d build .",
+      "command": "scripts/build.sh",  // board from board.env
       "group": { "kind": "build", "isDefault": true },
-      "problemMatcher": ["$gcc"]
-    },
-    {
-      // Rebuilds build/ for the board it was last built for (used by "Debug on device").
-      // To switch boards once: west build -p always -b <board> -d build .
-      "label": "Build (current board)",
-      "type": "shell",
-      "command": "west build -d build .",
       "problemMatcher": ["$gcc"]
     },
     {

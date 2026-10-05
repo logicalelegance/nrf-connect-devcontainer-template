@@ -46,8 +46,9 @@ jobs:
           IMAGE: ${{ needs.build.outputs.image }}
         run: |
           NCS=$(yq '.manifest.projects[] | select(.name == "nrf") | .revision' west.yml)
+          source board.env
           cat > notes.md <<EOF
-          Firmware for \`nrf52840dk/nrf52840\`, built from commit \`${GITHUB_SHA}\`.
+          Firmware for \`${BOARD}\`, built from commit \`${GITHUB_SHA}\`.
 
           ## Reproduce this build
 
@@ -56,7 +57,7 @@ jobs:
 
           \`\`\`sh
           git checkout ${GITHUB_REF_NAME}
-          docker run --rm -v "\$PWD":/workdir/app ${IMAGE} west build -b nrf52840dk/nrf52840 -d build .
+          docker run --rm -v "\$PWD":/workdir/app ${IMAGE} scripts/build.sh
           sha256sum build/app/zephyr/zephyr.elf build/app/zephyr/zephyr.hex
           \`\`\`
 
