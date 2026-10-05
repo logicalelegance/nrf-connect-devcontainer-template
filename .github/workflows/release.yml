@@ -1,0 +1,70 @@
+# Release: push a tag like v0.1.0 (must match the VERSION file) to build and publish a
+# GitHub Release with the firmware and everything needed to reproduce the build.
+#   git tag -a v0.1.0 -m "Release 0.1.0" && git push origin v0.1.0
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  check-version:
+    name: Tag matches VERSION
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - run: |
+          VERSION=$(awk -F' = ' '/^VERSION_MAJOR/ {major=$2} /^VERSION_MINOR/ {minor=$2} /^PATCHLEVEL/ {patch=$2}
+                                 END {print major "." minor "." patch}' VERSION)
+          echo "Tag ${GITHUB_REF_NAME}, VERSION file ${VERSION}"
+          test "${GITHUB_REF_NAME}" = "v${VERSION}"
+
+  build:
+    needs: check-version
+    uses: ./.github/workflows/build.yml
+    permissions:
+      contents: read
+      packages: write
+
+  release:
+    name: Publish release
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: firmware-${{ needs.build.outputs.suffix }}
+          path: firmware
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE: ${{ needs.build.outputs.image }}
+        run: |
+          NCS=$(yq '.manifest.projects[] | select(.name == "nrf") | .revision' west.yml)
+          cat > notes.md <<EOF
+          Firmware for \`nrf52840dk/nrf52840\`, built from commit \`${GITHUB_SHA}\`.
+
+          ## Reproduce this build
+
+          - nRF Connect SDK: \`${NCS}\` (from \`west.yml\`)
+          - Toolchain image: \`${IMAGE}\`
+
+          \`\`\`sh
+          git checkout ${GITHUB_REF_NAME}
+          docker run --rm -v "\$PWD":/workdir/app ${IMAGE} west build -b nrf52840dk/nrf52840 -d build .
+          sha256sum build/app/zephyr/zephyr.elf build/app/zephyr/zephyr.hex
+          \`\`\`
+
+          ## SHA-256
+
+          \`\`\`
+          $(cd firmware && sha256sum zephyr.elf zephyr.hex)
+          \`\`\`
+          EOF
+          gh release create "${GITHUB_REF_NAME}" firmware/zephyr.elf firmware/zephyr.hex \
+            --title "${GITHUB_REF_NAME}" --notes-file notes.md

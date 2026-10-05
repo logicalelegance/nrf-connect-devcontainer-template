@@ -1,10 +1,17 @@
 # Reusable build: makes sure the toolchain image exists, then builds the firmware and
 # runs the unit tests inside it with the same commands as the README and VS Code tasks.
-# Called by ci.yml (and later by a release workflow).
+# Called by ci.yml (every push) and release.yml (version tags).
 name: Build
 
 on:
   workflow_call:
+    outputs:
+      image:
+        description: Toolchain image used, pinned by digest (ghcr.io/...@sha256:...)
+        value: ${{ jobs.image.outputs.pinned }}
+      suffix:
+        description: Artifact name suffix, <version>-<12-char git hash>
+        value: ${{ jobs.firmware.outputs.suffix }}
 
 jobs:
   image:
@@ -15,6 +22,7 @@ jobs:
       packages: write
     outputs:
       ref: ${{ steps.tag.outputs.ref }}
+      pinned: ${{ steps.digest.outputs.pinned }}
     steps:
       - uses: actions/checkout@v7
 
@@ -44,6 +52,15 @@ jobs:
             docker push "$REF"
           fi
 
+      - name: Record image digest
+        id: digest
+        env:
+          REF: ${{ steps.tag.outputs.ref }}
+        run: |
+          DIGEST=$(docker buildx imagetools inspect "$REF" --format '{{.Manifest.Digest}}')
+          echo "pinned=${REF%%:*}@${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Image: ${REF%%:*}@${DIGEST}"
+
   firmware:
     name: Firmware and unit tests
     needs: image
@@ -51,6 +68,8 @@ jobs:
     permissions:
       contents: read
       packages: read
+    outputs:
+      suffix: ${{ steps.name.outputs.suffix }}
     env:
       IMAGE: ${{ needs.image.outputs.ref }}
     steps:
@@ -71,17 +90,16 @@ jobs:
           docker run --rm -v "$PWD":/workdir/app "$IMAGE" west build -b nrf52840dk/nrf52840 -d build .
           sha256sum build/app/zephyr/zephyr.elf build/app/zephyr/zephyr.hex
 
-      # Version and git hash exactly as compiled into the firmware (from the VERSION file and
-      # `git describe`), read from the header Zephyr generates during the build.
+      # Version as compiled into the firmware (from the VERSION file, read from the header
+      # Zephyr generates) plus the 12-character commit hash.
       - name: Name this build
         id: name
         run: |
           HEADER=build/app/zephyr/include/generated/zephyr/app_version.h
           VERSION=$(sed -n 's/^#define APP_VERSION_STRING *"\(.*\)"$/\1/p' "$HEADER")
-          GIT_HASH=$(sed -n 's/^#define APP_BUILD_VERSION *//p' "$HEADER")
-          test -n "$VERSION" && test -n "$GIT_HASH"
-          echo "suffix=${VERSION}-${GIT_HASH}" >> "$GITHUB_OUTPUT"
-          echo "Build: ${VERSION}-${GIT_HASH}"
+          test -n "$VERSION"
+          echo "suffix=${VERSION}-${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
+          echo "Build: ${VERSION}-${GITHUB_SHA::12}"
 
       - name: Run unit tests
         run: docker run --rm -v "$PWD":/workdir/app "$IMAGE" west twister -T tests -p native_sim/native/64 --outdir twister-out
