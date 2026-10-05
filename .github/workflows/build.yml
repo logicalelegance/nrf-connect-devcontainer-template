@@ -73,7 +73,11 @@ jobs:
     env:
       IMAGE: ${{ needs.image.outputs.ref }}
     steps:
+      # No saved token: the checkout is handed to the container user below, so
+      # checkout's end-of-job token cleanup couldn't edit .git/config anyway.
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - uses: docker/login-action@v4
         with:
