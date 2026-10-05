@@ -13,6 +13,25 @@
       "cwd": "${workspaceFolder}",
       "MIMode": "gdb",
       "miDebuggerPath": "/usr/bin/gdb-multiarch"
+    },
+    {
+      // Debugs the board through a J-Link connected to the Mac. First, on the Mac (not in the
+      // container), start the GDB server:  scripts/jlink-gdb-server.sh [J-Link device name]
+      // Builds whatever board build/ was last built for, loads it, and runs to your breakpoints.
+      "name": "Debug on device (J-Link on the Mac)",
+      "type": "cppdbg",
+      "request": "launch",
+      "preLaunchTask": "Build (current board)",
+      "program": "${workspaceFolder}/build/app/zephyr/zephyr.elf",
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "/opt/zephyr-sdk/gnu/arm-zephyr-eabi/bin/arm-zephyr-eabi-gdb",
+      "miDebuggerServerAddress": "host.docker.internal:2331",
+      "postRemoteConnectCommands": [
+        { "text": "monitor reset" },
+        { "text": "load" },
+        { "text": "monitor reset" }
+      ]
     }
   ]
 }

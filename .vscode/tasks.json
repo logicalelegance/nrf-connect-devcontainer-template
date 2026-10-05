@@ -10,6 +10,14 @@
       "problemMatcher": ["$gcc"]
     },
     {
+      // Rebuilds build/ for the board it was last built for (used by "Debug on device").
+      // To switch boards once: west build -p always -b <board> -d build .
+      "label": "Build (current board)",
+      "type": "shell",
+      "command": "west build -d build .",
+      "problemMatcher": ["$gcc"]
+    },
+    {
       "label": "Build (native_sim)",
       "type": "shell",
       "command": "west build -b native_sim/native/64 -d build-sim .",
@@ -21,6 +29,14 @@
       "command": "west twister -T tests -p native_sim/native/64 --outdir twister-out",
       "group": { "kind": "test", "isDefault": true },
       "problemMatcher": ["$gcc"]
+    },
+    {
+      // Shows console/log output sent over the J-Link (build with rtt.conf; GDB server running).
+      "label": "RTT console",
+      "type": "shell",
+      "command": "bash -c 'cat < /dev/tcp/host.docker.internal/19021'",
+      "isBackground": true,
+      "problemMatcher": []
     },
     {
       "label": "Clean",
