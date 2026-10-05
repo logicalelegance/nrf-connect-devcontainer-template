@@ -15,7 +15,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential ca-certificates ccache curl device-tree-compiler dfu-util file \
-        gdb-multiarch git gperf libmagic1 python3 python3-dev python3-venv python3-yaml \
+        gdb-multiarch git gperf libmagic1 openssh-client python3 python3-dev python3-venv python3-yaml \
         sudo unzip wget xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
