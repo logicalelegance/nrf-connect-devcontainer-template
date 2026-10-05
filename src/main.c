@@ -1,5 +1,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
+#include <app_version.h>
 
 #include "blink.h"
 
@@ -8,6 +9,9 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 int main(void)
 {
 	bool on = false;
+
+	/* Version from the VERSION file; build version is the app's git describe. */
+	printk("blinky %s (%s)\n", APP_VERSION_STRING, STRINGIFY(APP_BUILD_VERSION));
 
 	if (!gpio_is_ready_dt(&led) || gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE) < 0) {
 		return 0;

@@ -71,12 +71,24 @@ jobs:
           docker run --rm -v "$PWD":/workdir/app "$IMAGE" west build -b nrf52840dk/nrf52840 -d build .
           sha256sum build/app/zephyr/zephyr.elf build/app/zephyr/zephyr.hex
 
+      # Version and git hash exactly as compiled into the firmware (from the VERSION file and
+      # `git describe`), read from the header Zephyr generates during the build.
+      - name: Name this build
+        id: name
+        run: |
+          HEADER=build/app/zephyr/include/generated/zephyr/app_version.h
+          VERSION=$(sed -n 's/^#define APP_VERSION_STRING *"\(.*\)"$/\1/p' "$HEADER")
+          GIT_HASH=$(sed -n 's/^#define APP_BUILD_VERSION *//p' "$HEADER")
+          test -n "$VERSION" && test -n "$GIT_HASH"
+          echo "suffix=${VERSION}-${GIT_HASH}" >> "$GITHUB_OUTPUT"
+          echo "Build: ${VERSION}-${GIT_HASH}"
+
       - name: Run unit tests
         run: docker run --rm -v "$PWD":/workdir/app "$IMAGE" west twister -T tests -p native_sim/native/64 --outdir twister-out
 
       - uses: actions/upload-artifact@v7
         with:
-          name: firmware
+          name: firmware-${{ steps.name.outputs.suffix }}
           path: |
             build/app/zephyr/zephyr.elf
             build/app/zephyr/zephyr.hex
@@ -84,5 +96,5 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: test-results
+          name: test-results-${{ steps.name.outputs.suffix }}
           path: twister-out/twister_report.xml
