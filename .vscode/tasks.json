@@ -10,6 +10,12 @@
       "problemMatcher": ["$gcc"]
     },
     {
+      "label": "Build (native_sim)",
+      "type": "shell",
+      "command": "west build -b native_sim/native/64 -d build-sim .",
+      "problemMatcher": ["$gcc"]
+    },
+    {
       "label": "Test",
       "type": "shell",
       "command": "west twister -T tests -p native_sim/native/64 --outdir twister-out",
@@ -19,7 +25,7 @@
     {
       "label": "Clean",
       "type": "shell",
-      "command": "rm -rf build twister-out",
+      "command": "rm -rf build build-sim twister-out",
       "problemMatcher": []
     }
   ]

@@ -1,0 +1,18 @@
+// Run with Run and Debug (F5). Each configuration builds first.
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Runs the app as a program inside the container: breakpoints, stepping, variables.
+      // No hardware needed; anything touching real peripherals is simulated.
+      "name": "Debug on native_sim",
+      "type": "cppdbg",
+      "request": "launch",
+      "preLaunchTask": "Build (native_sim)",
+      "program": "${workspaceFolder}/build-sim/app/zephyr/zephyr.exe",
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb-multiarch"
+    }
+  ]
+}
