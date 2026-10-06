@@ -63,7 +63,7 @@ A main goal was to use the same toolchain image locally and in CI builds and to 
   - "Debug on device" flashes as part of loading.
   - On the Mac with Nordic's tools: `nrfjprog --program build/app/zephyr/zephyr.hex --chiperase --verify --reset`. `nrfutil device program` is the newer equivalent **(unverified)**.
   - DK drag-and-drop onto its `JLINK` drive **(unverified)**.
-  - Boards with bootloaders use their own tools (Adafruit `adafruit-nrfutil`, Arduino `bossac`); needs app placement settings in `boards/<board>.conf`.
+  - Boards with bootloaders use their own tools (Adafruit `adafruit-nrfutil`, Arduino `bossac`); needs app placement settings in `boards/<board>_<soc>.conf` (board name with `/` replaced by `_`, see [workflow.md](workflow.md)).
 - **Release**: bump `VERSION`, `git tag -a vX.Y.Z`, push the tag. Release notes include the image digest and rebuild command.
 - **Rebuild a release**: the release notes' command pulls the pinned toolchain image from this repo's private GitHub Container Registry, so first run `docker login ghcr.io` with your GitHub username and a token that has `read:packages`.
 
