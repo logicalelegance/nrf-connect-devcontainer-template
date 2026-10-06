@@ -64,7 +64,7 @@ A main goal was to use the same toolchain image locally and in CI builds and to 
   - Boards with bootloaders use their own tools (Adafruit `adafruit-nrfutil`, Arduino `bossac`); needs app placement settings in `boards/<board>.conf`.
 - **Release**: bump `VERSION`, `git tag -a vX.Y.Z`, push the tag. Release notes include the image digest and rebuild command.
 
-For more detailed usage information see [workflow.md].
+For more detailed usage information see [workflow.md](workflow.md)
 
 ## What's not working / not included
 
