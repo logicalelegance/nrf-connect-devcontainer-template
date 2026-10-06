@@ -1,9 +1,11 @@
+# nRF Connect SDK Dev Container Template
+
 ## Intro
 
 This is a template for an nRF Connect based development environment using a docker container for nearly all dependencies.
 The container is built dynamically rather than using Nordic's prebuilt images, since those are x86 only. Doing so allows us to build at native speed without emulation.
 
-A main goal was to use the same toolchain image locally and in CI builds and to have builds match given same git hash. The NCS toolchain is selectable in one place in the source tree. Additionally we follow Nordic's recommended workspace layout and uses `west.yml`. This is not a pure cmake build enviroment.
+A main goal was to use the same toolchain image locally and in CI builds and to have builds match given same git hash. The NCS toolchain is selectable in one place in the source tree. Additionally we follow Nordic's recommended workspace layout and use `west.yml`. This is not a pure cmake build environment.
 
 ## What's provided
 
@@ -59,16 +61,17 @@ A main goal was to use the same toolchain image locally and in CI builds and to 
 - **Logs over the J-Link**: build with `-- -DEXTRA_CONF_FILE=rtt.conf`, then the RTT console task.
 - **Flash**:
   - "Debug on device" flashes as part of loading.
-  - On the Mac with Nordic's tools: `nrfjprog --program build/app/zephyr/zephyr.hex --chiperase --verify --reset` (verified). `nrfutil device program` is the newer equivalent **(unverified)**.
+  - On the Mac with Nordic's tools: `nrfjprog --program build/app/zephyr/zephyr.hex --chiperase --verify --reset`. `nrfutil device program` is the newer equivalent **(unverified)**.
   - DK drag-and-drop onto its `JLINK` drive **(unverified)**.
   - Boards with bootloaders use their own tools (Adafruit `adafruit-nrfutil`, Arduino `bossac`); needs app placement settings in `boards/<board>.conf`.
 - **Release**: bump `VERSION`, `git tag -a vX.Y.Z`, push the tag. Release notes include the image digest and rebuild command.
+- **Rebuild a release**: the release notes' command pulls the pinned toolchain image from this repo's private GitHub Container Registry, so first run `docker login ghcr.io` with your GitHub username and a token that has `read:packages`.
 
 For more detailed usage information see [workflow.md](workflow.md)
 
 ## What's not working / not included
 
-- Flashing or debugging from *inside* the container: Docker Desktop on macOS has no USB passthrough, the Mac side does it via an local network port.
+- Flashing or debugging from *inside* the container: Docker Desktop on macOS has no USB passthrough, the Mac side does it via a local network port.
 - Nordic's "nRF Debug" panel (Cortex-Debug used instead).
 - CI builds only the amd64 image. Macs build their own arm64 copy though they build identical firmware.
 - 32-bit `native_sim` (no multilib on arm64).
@@ -91,7 +94,7 @@ For more detailed usage information see [workflow.md](workflow.md)
 - Reproducibility:
   - The same commit gives byte-identical firmware anywhere.
   - release builds differ from branch builds only by the version string (`v0.1.0` vs hash)
-  - keep GHCR images: rebuilding the Dockerfile years later depends on upstream downloads. I.e. if you don't keep CI docker images stored somewhere, it's possibly the Dockerfile will refer to things that don't exist in the distant future.
+  - keep GHCR images: rebuilding the Dockerfile years later depends on upstream downloads. I.e. if you don't keep CI docker images stored somewhere, it's possible the Dockerfile will refer to things that don't exist in the distant future.
  
   
 
