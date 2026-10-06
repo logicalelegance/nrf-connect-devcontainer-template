@@ -95,6 +95,22 @@ For more detailed usage information see [workflow.md](workflow.md)
   - The same commit gives byte-identical firmware anywhere.
   - release builds differ from branch builds only by the version string (`v0.1.0` vs hash)
   - keep GHCR images: rebuilding the Dockerfile years later depends on upstream downloads. I.e. if you don't keep CI docker images stored somewhere, it's possible the Dockerfile will refer to things that don't exist in the distant future.
- 
-  
 
+## Sources
+
+Directly used for this template:
+
+- Memfault Interrupt: [Building Nordic nRF-Connect SDK Projects with GitHub Actions](https://interrupt.memfault.com/blog/ncs-github-actions) (custom ARM-only image, T2 workspace layout, shallow `west update`, version pinning)
+- Nordic: [ncs-example-application](https://github.com/nrfconnect/ncs-example-application) (recommended workspace-application layout)
+- Nordic's pinned tool versions, which the image reads: [tools-versions-linux.yml](https://github.com/nrfconnect/sdk-nrf/blob/v3.4.1/scripts/tools-versions-linux.yml), [requirements-fixed.txt](https://github.com/nrfconnect/sdk-nrf/blob/v3.4.1/scripts/requirements-fixed.txt)
+- [Zephyr SDK releases](https://github.com/zephyrproject-rtos/sdk-ng/releases) (native aarch64 and x86_64 toolchains)
+- Nordic DevZone: [nRF Connect for VS Code Extension Pack breaks Dev Containers](https://devzone.nordicsemi.com/f/nordic-q-a/115987/nrf-connect-for-vs-code-extension-pack-breaks-dev-containers-in-visual-studio-code) (why Nordic's extensions mustn't be installed locally)
+- Zephyr docs: [Application development](https://docs.zephyrproject.org/latest/develop/application/index.html), [Sysbuild](https://docs.zephyrproject.org/latest/build/sysbuild/index.html)
+- VS Code: [Developing inside a Container](https://code.visualstudio.com/docs/devcontainers/containers)
+- [Cortex-Debug](https://github.com/Marus/cortex-debug); SEGGER: [J-Link GDB Server](https://wiki.segger.com/J-Link_GDB_Server), [thread-aware debugging](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/thread-aware-debugging/)
+
+Background reading (Memfault Interrupt):
+
+- [Reproducible Firmware Builds](https://interrupt.memfault.com/blog/reproducible-firmware-builds)
+- Practical Zephyr series: [Zephyr Basics](https://interrupt.memfault.com/blog/practical_zephyr_basics), [Kconfig](https://interrupt.memfault.com/blog/practical_zephyr_kconfig), [Devicetree semantics](https://interrupt.memfault.com/blog/practical_zephyr_dt_semantics), [West workspaces](https://interrupt.memfault.com/blog/practical_zephyr_west)
+- Debugging: [Debugging Firmware with GDB](https://interrupt.memfault.com/blog/gdb-for-firmware-1), [Advanced GDB Usage](https://interrupt.memfault.com/blog/advanced-gdb), [A Deep Dive into ARM Cortex-M Debug Interfaces](https://interrupt.memfault.com/blog/a-deep-dive-into-arm-cortex-m-debug-interfaces) (covers RTOS thread awareness)
