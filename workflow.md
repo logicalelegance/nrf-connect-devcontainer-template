@@ -9,9 +9,10 @@
 ## 2. Configure
 
 - Board: `BOARD=` in `board.env`.
-- Board-specific settings: devicetree overlays and Kconfig in `boards/<board>.overlay` / `boards/<board>.conf`, picked up automatically **(verify naming for new-style board names)**.
+- Board-specific settings: devicetree overlays and Kconfig in `boards/<board>_<soc>.overlay` / `boards/<board>_<soc>.conf`, i.e. the board name with `/` replaced by `_` (e.g. `boards/nrf52840dk_nrf52840.conf`, `boards/thingy52_nrf52832.overlay`). Zephyr picks them up automatically. Don't use the short board name (`boards/nrf52840dk.conf`): Zephyr rejects it for boards that cover several chips, like the nRF52840 DK.
 - NCS version: `revision:` in `west.yml`, then Rebuild Container.
-- Extra libraries/modules: in-repo folders, or extra `projects:` in `west.yml` (pinned revision; rebuild the container). Private dependencies need a credentials design **(not done)**.
+- Extra libraries/modules: in-repo folders, or extra `projects:` in `west.yml` (pinned revision; rebuild the container).
+- Private dependencies (private repos) are not covered yet. `west update` runs while the Docker image is built, without access to your SSH keys, and CI would need its own credentials too. Options for later: pass credentials into the image build (Docker build secrets or SSH forwarding) plus a CI deploy key or token; or keep private code as git submodules of the app repo, which are cloned with the app on the Mac and in CI and never need to be inside the image.
 
 ## 3. Edit → build → test loop
 
