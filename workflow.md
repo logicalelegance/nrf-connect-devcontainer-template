@@ -2,7 +2,7 @@
 
 ## 1. Start a project
 
-- "Use this template" on GitHub, or `gh repo create my-app --template logicalelegance/ncs-devcontainer-template --private`.
+- "Use this template" on GitHub, or `gh repo create my-app --template logicalelegance/nrf-connect-devcontainer-template --private`.
 - Clone, open in VS Code, **Reopen in Container** (first image build about 7–10 min).
 - Rename `project(blinky)` in `CMakeLists.txt`, reset `VERSION` to 0.1.0, replace `src/` and `tests/`, edit `prj.conf`.
 
